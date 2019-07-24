@@ -11,12 +11,11 @@ class FirebaseAuthUI extends StatefulWidget {
   final TextStyle buttonStyle;
   final TextStyle textInputStyle;
 
-  const FirebaseAuthUI(
-      {Key key,
-      @required this.onComplete,
-      @required this.loadingWidget,
-      this.buttonStyle,
-      this.textInputStyle})
+  const FirebaseAuthUI({Key key,
+    @required this.onComplete,
+    @required this.loadingWidget,
+    this.buttonStyle,
+    this.textInputStyle})
       : super(key: key);
 
   @override
@@ -40,16 +39,6 @@ class _FirebaseAuthUIState extends State<FirebaseAuthUI> {
             return widget.loadingWidget;
           }
 
-          if (snapshot.data == LoginState.LOGGED_IN) {
-            FlatButton(
-              onPressed: widget.onComplete(),
-              child: Text(
-                "Done",
-                style: widget.buttonStyle,
-              ),
-            );
-          }
-
           return Center(
             child: GestureDetector(
               onTap: () => dismissKeyboard(context),
@@ -66,7 +55,10 @@ class _FirebaseAuthUIState extends State<FirebaseAuthUI> {
                             ? Text("Failed to login. Please try again")
                             : Container(),
                         TextFormField(
-                            style: Theme.of(context).textTheme.body2,
+                            style: Theme
+                                .of(context)
+                                .textTheme
+                                .body2,
                             decoration: InputDecoration(
                                 labelText: "Email",
                                 hintText: "Enter email address"),
@@ -74,9 +66,9 @@ class _FirebaseAuthUIState extends State<FirebaseAuthUI> {
                             validator: _emailValidation),
                         snapshot.data == LoginState.CHECKING_EMAIL
                             ? Container(
-                                height: 40,
-                                width: 40,
-                                child: widget.loadingWidget)
+                            height: 40,
+                            width: 40,
+                            child: widget.loadingWidget)
                             : widgetForState(snapshot.data),
                       ],
                     ),
@@ -96,7 +88,10 @@ class _FirebaseAuthUIState extends State<FirebaseAuthUI> {
       return Column(children: [
         TextFormField(
             obscureText: true,
-            style: Theme.of(context).textTheme.body2,
+            style: Theme
+                .of(context)
+                .textTheme
+                .body2,
             controller: _passwordController,
             decoration: InputDecoration(
                 labelText: "Password", hintText: "Enter password"),
@@ -111,7 +106,10 @@ class _FirebaseAuthUIState extends State<FirebaseAuthUI> {
       return Column(children: [
         TextFormField(
             obscureText: true,
-            style: Theme.of(context).textTheme.body2,
+            style: Theme
+                .of(context)
+                .textTheme
+                .body2,
             controller: _passwordController,
             decoration: InputDecoration(
                 labelText: "Password", hintText: "Enter password"),
@@ -161,12 +159,13 @@ class _FirebaseAuthUIState extends State<FirebaseAuthUI> {
     if (_formKey.currentState.validate()) {
       createAccount
           ? _bloc.createUserWithEmailAndPassword(
-              email: _emailController.text, password: _passwordController.text)
+          email: _emailController.text, password: _passwordController.text)
           : _bloc.signInWithEmailAndPassword(
-              email: _emailController.text, password: _passwordController.text);
+          email: _emailController.text, password: _passwordController.text);
 
-      await showDialog(
+      var result = await showDialog(
           context: context,
+          barrierDismissible: false,
           builder: (context) {
             return StreamBuilder<LoginState>(
                 stream: _bloc.stream,
@@ -176,15 +175,18 @@ class _FirebaseAuthUIState extends State<FirebaseAuthUI> {
 
                   if (snapshot.data == LoginState.FAILED) {
                     title = "Sorry!";
-                    body = Text("Something went wrong. Please try again.");
-                  } else if (snapshot.data == LoginState.LOADING) {
+                    body = OutlineButton(
+                        onPressed: () => Navigator.of(context).pop(true),
+                        child: Text("Something went wrong. Please try again.")
+                    );
+                  } else if (snapshot.data == LoginState.LOGGED_IN) {
+                    title = "Done";
+                    body = OutlineButton(
+                        onPressed: () => Navigator.of(context).pop(true),
+                        child: Text("Success - click to continue"));
+                  } else {
                     title = "Loading...";
                     body = widget.loadingWidget;
-                  } else {
-                    title = "Done";
-                    body = FlatButton(
-                        onPressed: () => Navigator.of(context).pop(true),
-                        child: Text("Success!"));
                   }
 
                   return AlertDialog(
@@ -195,6 +197,10 @@ class _FirebaseAuthUIState extends State<FirebaseAuthUI> {
                       content: body);
                 });
           });
+
+      if (result != null && result == true) {
+        widget.onComplete();
+      }
     }
   }
 
