@@ -98,6 +98,7 @@ class _FirebaseAuthUIState extends State<FirebaseAuthUI> {
                 labelText: "Password", hintText: "Enter password"),
             validator: _passwordValidation),
         FlatButton(
+          key: Key("login"),
           onPressed: () => _validateForm(false),
           child: Text("Login", style: widget.buttonStyle),
           padding: const EdgeInsets.all(30.0),
@@ -106,6 +107,7 @@ class _FirebaseAuthUIState extends State<FirebaseAuthUI> {
     } else if (state == LoginState.EMAIL_NOT_EXISTS) {
       return Column(children: [
         TextFormField(
+            key: Key("password"),
             obscureText: true,
             style: Theme
                 .of(context)
@@ -123,6 +125,7 @@ class _FirebaseAuthUIState extends State<FirebaseAuthUI> {
       ]);
     } else {
       return FlatButton(
+        key: Key("continue"),
         onPressed: () => _bloc.checkEmail(_emailController.text),
         child: Text(
           "Continue",
@@ -177,12 +180,14 @@ class _FirebaseAuthUIState extends State<FirebaseAuthUI> {
                   if (snapshot.data == LoginState.FAILED) {
                     title = "Sorry!";
                     body = OutlineButton(
+                        key: Key("cancel"),
                         onPressed: () => Navigator.of(context).pop(true),
                         child: Text("Something went wrong. Please try again.")
                     );
                   } else if (snapshot.data == LoginState.LOGGED_IN) {
                     title = "Done";
                     body = OutlineButton(
+                        key: Key("success"),
                         onPressed: () => Navigator.of(context).pop(true),
                         child: Text("Success - click to continue"));
                   } else {
