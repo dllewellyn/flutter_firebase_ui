@@ -29,9 +29,10 @@ class _FirebaseAuthUIState extends State<FirebaseAuthUI> {
   TextEditingController _emailController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
 
+
   @override
   Widget build(BuildContext context) {
-    _bloc.reset();
+
     return StreamBuilder<LoginState>(
         stream: _bloc.stream,
         builder: (context, snapshot) {
@@ -207,6 +208,7 @@ class _FirebaseAuthUIState extends State<FirebaseAuthUI> {
   @override
   void didChangeDependencies() {
     _bloc = LoginUIBloc();
+    _bloc.reset();
     super.didChangeDependencies();
   }
 
