@@ -85,6 +85,7 @@ class _FirebaseAuthUIState extends State<FirebaseAuthUI> {
     if (state == LoginState.EMAIL_EXISTS) {
       return Column(children: [
         TextFormField(
+          key: Key("password"),
             obscureText: true,
             style: Theme.of(context).textTheme.body2,
             controller: _passwordController,
@@ -101,7 +102,6 @@ class _FirebaseAuthUIState extends State<FirebaseAuthUI> {
     } else if (state == LoginState.EMAIL_NOT_EXISTS) {
       return Column(children: [
         TextFormField(
-            key: Key("password"),
             obscureText: true,
             style: Theme.of(context).textTheme.body2,
             controller: _passwordController,
