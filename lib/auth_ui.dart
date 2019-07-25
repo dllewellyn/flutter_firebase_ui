@@ -109,7 +109,7 @@ class _FirebaseAuthUIState extends State<FirebaseAuthUI> {
                 labelText: "Password", hintText: "Enter password"),
             validator: _passwordValidation),
         FlatButton(
-          onPressed: () => _validateForm(false),
+          onPressed: () => _validateForm(true),
           child: Text("Create account", style: widget.buttonStyle),
           padding: const EdgeInsets.all(30.0),
         )
